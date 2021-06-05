@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    var emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
-    @State private var emojiCount = 24
+    @State private var emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
+//    @State private var emojiCount = emojis.count
     
     var body: some View {
         VStack {
+            Text("Memorise!")
+                .font(.largeTitle)
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                    ForEach(emojis[0..<emojiCount], id: \.self) { emoji in
+                    ForEach(emojis.shuffled()[0..<emojis.count], id: \.self) { emoji in
                         CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)
                     }
                 }
@@ -23,9 +25,12 @@ struct ContentView: View {
             .foregroundColor(.red)
             Spacer()
             HStack {
-                remove
-                Spacer()
-                add
+                vehicles
+                    .padding(.horizontal)
+                devices
+                    .padding(.horizontal)
+                animals
+                    .padding(.horizontal)
             }
             .font(.largeTitle)
             .padding(.horizontal)
@@ -33,25 +38,61 @@ struct ContentView: View {
         .padding(.horizontal)
     }
     
-    var remove: some View {
-        Button {
-            if emojiCount > 1 {
-                emojiCount -= 1
+    var vehicles: some View {
+        VStack {
+            Button {
+                emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
+            } label: {
+                Image(systemName: "car.circle")
             }
-        } label: {
-            Image(systemName: "minus.circle")
+            Text("Vehicles")
+                .font(.footnote)
         }
     }
     
-    var add: some View {
-        Button {
-            if emojiCount < emojis.count {
-                emojiCount += 1
+    var devices: some View {
+        VStack {
+            Button {
+                emojis = ["⌚️", "📱", "💻", "🖥", "🖨", "🖱", "🕹", "📷", "🎥", "⌨️", "🎧"]
+            } label: {
+                Image(systemName: "headphones.circle")
             }
-        } label: {
-            Image(systemName: "plus.circle")
+            Text("Devices")
+                .font(.footnote)
         }
     }
+    
+    var animals: some View {
+        VStack {
+            Button {
+                emojis = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵"]
+            } label: {
+                Image(systemName: "ant.circle")
+            }
+            Text("Animals")
+                .font(.footnote)
+        }
+    }
+    
+//    var remove: some View {
+//        Button {
+//            if emojiCount > 1 {
+//                emojiCount -= 1
+//            }
+//        } label: {
+//            Image(systemName: "minus.circle")
+//        }
+//    }
+//
+//    var add: some View {
+//        Button {
+//            if emojiCount < emojis.count {
+//                emojiCount += 1
+//            }
+//        } label: {
+//            Image(systemName: "plus.circle")
+//        }
+//    }
 }
 
 struct CardView: View {
