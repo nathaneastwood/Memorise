@@ -7,119 +7,53 @@
 
 import SwiftUI
 
+// This is our view, its purpose is to reflect the current state of the model
+
 struct ContentView: View {
-    @State private var emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
-//    @State private var emojiCount = emojis.count
+    @ObservedObject var viewModel: EmojiMemoryGame
     
     var body: some View {
-        VStack {
-            Text("Memorise!")
-                .font(.largeTitle)
-            ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
-                    ForEach(emojis.shuffled()[0..<emojis.count], id: \.self) { emoji in
-                        CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)
-                    }
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 65))]) {
+                ForEach(viewModel.cards) { card in
+                    CardView(card: card)
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .onTapGesture {
+                            viewModel.choose(card)
+                        }
                 }
             }
-            .foregroundColor(.red)
-            Spacer()
-            HStack {
-                vehicles
-                    .padding(.horizontal)
-                devices
-                    .padding(.horizontal)
-                animals
-                    .padding(.horizontal)
-            }
-            .font(.largeTitle)
-            .padding(.horizontal)
         }
+        .foregroundColor(.red)
+        .font(.largeTitle)
         .padding(.horizontal)
     }
-    
-    var vehicles: some View {
-        VStack {
-            Button {
-                emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
-            } label: {
-                Image(systemName: "car.circle")
-            }
-            Text("Vehicles")
-                .font(.footnote)
-        }
-    }
-    
-    var devices: some View {
-        VStack {
-            Button {
-                emojis = ["⌚️", "📱", "💻", "🖥", "🖨", "🖱", "🕹", "📷", "🎥", "⌨️", "🎧"]
-            } label: {
-                Image(systemName: "headphones.circle")
-            }
-            Text("Devices")
-                .font(.footnote)
-        }
-    }
-    
-    var animals: some View {
-        VStack {
-            Button {
-                emojis = ["🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼", "🐻‍❄️", "🐨", "🐯", "🦁", "🐮", "🐷", "🐸", "🐵"]
-            } label: {
-                Image(systemName: "ant.circle")
-            }
-            Text("Animals")
-                .font(.footnote)
-        }
-    }
-    
-//    var remove: some View {
-//        Button {
-//            if emojiCount > 1 {
-//                emojiCount -= 1
-//            }
-//        } label: {
-//            Image(systemName: "minus.circle")
-//        }
-//    }
-//
-//    var add: some View {
-//        Button {
-//            if emojiCount < emojis.count {
-//                emojiCount += 1
-//            }
-//        } label: {
-//            Image(systemName: "plus.circle")
-//        }
-//    }
 }
 
 struct CardView: View {
-    var content: String
-    @State private var isFaceUp: Bool = true
+    var card: MemoryGame<String>.Card
     
     var body: some View {
         ZStack {
             let shape = RoundedRectangle(cornerRadius: 20)
-            if isFaceUp {
+            if card.isFaceUp {
                 shape.fill().foregroundColor(.white)
                 shape.strokeBorder(lineWidth: 3)
-                Text(content).font(.largeTitle)
+                Text(card.content).font(.largeTitle)
+            } else if card.isMatched {
+                shape.opacity(0)
             } else {
                 shape.fill()
             }
-        }
-        .onTapGesture {
-            isFaceUp = !isFaceUp
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let game = EmojiMemoryGame()
+        ContentView(viewModel: game)
             .preferredColorScheme(.dark)
-        ContentView()
+        ContentView(viewModel: game)
     }
 }

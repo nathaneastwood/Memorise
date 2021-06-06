@@ -7,8 +7,13 @@
 
 import SwiftUI
 
-class EmojiMemoryGame {
+// This is our ViewModel
+// This binds the View to the Model
+// It makes the Model private and only exposes the required information to the View
+
+class EmojiMemoryGame: ObservableObject {
     // statics are created once in the entire app whereas vars are created in every instance of the class
+    // if we had another var or func calling the statics, we would need the full name, e.g. EmojiMemoryGame.emojis
     static let emojis = ["🚗", "🚌", "🚛", "🚓", "🛵", "✈️", "🚒", "🚀", "🚁", "🛸", "🚑", "🦼", "🛺", "🏍", "🚲", "🛻", "🚠", "🚂", "🚝", "🚜", "🏎", "⛵️", "🚤", "🛳"]
     
     static func createMemoryGame() -> MemoryGame<String> {
@@ -17,13 +22,15 @@ class EmojiMemoryGame {
         }
     }
     
-    // private(set) says other classes and structs can look at the model, but can't choose it
-    private(set) var model: MemoryGame<String> = createMemoryGame()
+    @Published private var model: MemoryGame<String> = createMemoryGame()
         
     
     var cards: Array<MemoryGame<String>.Card> {
-        return model.cards
+        model.cards
     }
 
-    // if we had another var or func calling the statics, we would need the full name, e.g. EmojiMemoryGame.emojis
+    // MARK - Intent(s)
+    func choose(_ card: MemoryGame<String>.Card) {
+        model.choose(card)
+    }
 }
